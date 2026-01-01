@@ -40,12 +40,42 @@ int main(void)
     {
 		GameGridToScreenGrid(gameGrid,screenGrid);
 		ScreenWriteGrid(screenGrid);
-    Delay(400000);
+    Delay(200000);
     gameGrid[x][y] = SNAKE;
 		x++;
-		if(x == GAME_GRID_X){
-			x = 0;
+		while(x == GAME_GRID_X-1){
+		GameGridToScreenGrid(gameGrid,screenGrid);
+		ScreenWriteGrid(screenGrid);
+    Delay(200000);
+    gameGrid[x][y] = SNAKE;
 			y++;
+			while(y == GAME_GRID_Y-1){
+		GameGridToScreenGrid(gameGrid,screenGrid);
+		ScreenWriteGrid(screenGrid);
+    Delay(200000);
+    gameGrid[x][y] = SNAKE;
+			x--;
+				
+			while(x == 0){
+		GameGridToScreenGrid(gameGrid,screenGrid);
+		ScreenWriteGrid(screenGrid);
+    Delay(200000);
+    gameGrid[x][y] = SNAKE;
+			y--;
+			while(y == 1){
+		GameGridToScreenGrid(gameGrid,screenGrid);
+		ScreenWriteGrid(screenGrid);
+    Delay(200000);
+    gameGrid[x][y] = SNAKE;
+			x++;
+		
+			while(x == GAME_GRID_X -2){
+		GameGridToScreenGrid(gameGrid,screenGrid);
+		ScreenWriteGrid(screenGrid);
+    Delay(200000);
+    gameGrid[x][y] = SNAKE;
+			y++;
+		}}}}
 		}
 	/*
 			
