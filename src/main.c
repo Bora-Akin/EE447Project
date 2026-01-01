@@ -1,11 +1,13 @@
 #include "Screen.h"
 
+// Pixels in the screen
+bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT];
 
-    // Struct StructName ArrayName[ROWS][COLS];
-    // Grid of the game
-    enum Block gameGrid[GAME_GRID_X][GAME_GRID_Y];
-    // Pixels in the screen
-    bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT];
+//Snake
+int snakeLength;
+Point Snake[SCREEN_HEIGHT*SCREEN_WIDTH];
+//Apple
+Point Apple;
 
 // ---------------------------------------------------------------------------
 // MAIN (Test Loop)
@@ -13,86 +15,36 @@
 int main(void)
 {
 
-    // Initialize
-    ScreenInit();
+  // Initialize
+  ScreenInit();
 
-    // Clear any random noise
-    ScreenClear();
+  // Clear any random noise
+  ScreenClear();
 
-    // Reset Cursor to top left
-    ScreenWrite(0, 0x80);
-    ScreenWrite(0, 0x40);
+  // Reset Cursor to top left
+  ScreenWrite(0, 0x80);
+  ScreenWrite(0, 0x40);
 
-		InitializeGameGrid(gameGrid);
-    gameGrid[0][0] = SNAKE;
-    gameGrid[3][3] = SNAKE;
-    gameGrid[3][4] = SNAKE;
-    gameGrid[3][5] = SNAKE;
-    gameGrid[3][6] = APPLE;
-		InitializeScreenGrid(screenGrid);
-		GameGridToScreenGrid(gameGrid,screenGrid);
-		ScreenWriteGrid(screenGrid);
-	
-		int x = 0;
-		int y = 0;
-    // Loop forever drawing a pattern
-    while (1)
-    {
-		GameGridToScreenGrid(gameGrid,screenGrid);
-		ScreenWriteGrid(screenGrid);
-    Delay(200000);
-    gameGrid[x][y] = SNAKE;
-		x++;
-		while(x == GAME_GRID_X-1){
-		GameGridToScreenGrid(gameGrid,screenGrid);
-		ScreenWriteGrid(screenGrid);
-    Delay(200000);
-    gameGrid[x][y] = SNAKE;
-			y++;
-			while(y == GAME_GRID_Y-1){
-		GameGridToScreenGrid(gameGrid,screenGrid);
-		ScreenWriteGrid(screenGrid);
-    Delay(200000);
-    gameGrid[x][y] = SNAKE;
-			x--;
-				
-			while(x == 0){
-		GameGridToScreenGrid(gameGrid,screenGrid);
-		ScreenWriteGrid(screenGrid);
-    Delay(200000);
-    gameGrid[x][y] = SNAKE;
-			y--;
-			while(y == 1){
-		GameGridToScreenGrid(gameGrid,screenGrid);
-		ScreenWriteGrid(screenGrid);
-    Delay(200000);
-    gameGrid[x][y] = SNAKE;
-			x++;
-		
-			while(x == GAME_GRID_X -2){
-		GameGridToScreenGrid(gameGrid,screenGrid);
-		ScreenWriteGrid(screenGrid);
-    Delay(200000);
-    gameGrid[x][y] = SNAKE;
-			y++;
-		}}}}
-		}
-	/*
-			
-        // Draw Diagonal Line Pattern
-        for (int i = 0; i < 84; i++)
-        {
-            // Creates a shifting bit pattern
-            ScreenWrite(1, (1 << (i % 8)));
-        }
+  //Create Snake and Apple
+  snakeLength = 3;
+  Apple.x = 2;
+  Apple.y = 3;
+  Snake[0].x = 0;
+  Snake[0].y = 0;
+  Snake[1].x = 1;
+  Snake[1].y = 0;
+  Snake[2].x = 2;
+  Snake[2].y = 0;
+  InitializeScreenGrid(screenGrid);
+  UpdateScreenGridSnake(screenGrid, Snake, snakeLength);
+  UpdateScreenGridApple(screenGrid, Apple);
+  ScreenWriteGrid(screenGrid);
 
-        // Wait so you can see if the screen resets or flickers
-        Delay(400000);
-
-        // Invert screen command (Test if commands are working)
-        ScreenWrite(0, 0x0D); // Inverse Video
-        Delay(400000);
-        ScreenWrite(0, 0x0C); // Normal Video
-		*/
-    }
+  // Loop forever drawing a pattern
+  while (1)
+  {
+  UpdateScreenGridSnake(screenGrid, Snake, snakeLength);
+  UpdateScreenGridApple(screenGrid, Apple);
+  ScreenWriteGrid(screenGrid);
+  }
 }
