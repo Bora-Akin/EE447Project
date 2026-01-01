@@ -46,10 +46,12 @@ void InitializeScreenGrid(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
   for (int i = 0; i < SCREEN_WIDTH; i++)
   {
     screenGrid[i][0] = true;
+    screenGrid[i][SCREEN_HEIGHT-1] = true;
   }
   for (int j = 0; j < SCREEN_HEIGHT; j++)
   {
     screenGrid[0][j] = true;
+    screenGrid[SCREEN_WIDTH-1][j] = true;
   }
 }
 void InitializeGameGrid(enum Block gameGrid[GAME_GRID_X][GAME_GRID_Y])
@@ -104,13 +106,46 @@ void GameGridToScreenGrid(const enum Block inputGameGrid[GAME_GRID_X][GAME_GRID_
         outputScreenGrid[i * 4 + 2 + 2][j * 4 + 2 + 3] = true;
         outputScreenGrid[i * 4 + 2 + 3][j * 4 + 2 + 3] = true;
 				//Border
+				if(i>0){
+					if(inputGameGrid[i-1][j] == SNAKE){
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 1] = true;
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 2] = true;
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 3] = true;
+					}else{
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 1] = false;
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 2] = false;
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 3] = false;
+				}
+				}else{
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 1] = false;
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 2] = false;
+					outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 3] = false;
+				}
+				if(j>0){
+					if(inputGameGrid[i][j-1] == SNAKE){
+					outputScreenGrid[i * 4 + 2 + 1][j * 4 + 2 + 0] = true;
+					outputScreenGrid[i * 4 + 2 + 2][j * 4 + 2 + 0] = true;
+					outputScreenGrid[i * 4 + 2 + 3][j * 4 + 2 + 0] = true;
+					}else{
+					outputScreenGrid[i * 4 + 2 + 1][j * 4 + 2 + 0] = false;
+					outputScreenGrid[i * 4 + 2 + 2][j * 4 + 2 + 0] = false;
+					outputScreenGrid[i * 4 + 2 + 3][j * 4 + 2 + 0] = false;
+				}
+				}else{
+					outputScreenGrid[i * 4 + 2 + 1][j * 4 + 2 + 0] = false;
+					outputScreenGrid[i * 4 + 2 + 2][j * 4 + 2 + 0] = false;
+					outputScreenGrid[i * 4 + 2 + 3][j * 4 + 2 + 0] = false;
+				}
+				
 				outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 0] = false;
-				outputScreenGrid[i * 4 + 2 + 1][j * 4 + 2 + 0] = false;
-				outputScreenGrid[i * 4 + 2 + 2][j * 4 + 2 + 0] = false;
-				outputScreenGrid[i * 4 + 2 + 3][j * 4 + 2 + 0] = false;
-				outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 1] = false;
-				outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 2] = false;
-				outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 3] = false;
+				if(i>0 && j > 0){
+					if(inputGameGrid[i-1][j-1] == SNAKE && inputGameGrid[i-1][j] && inputGameGrid[i][j-1]){
+						outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 0] = true;
+					}else{
+						outputScreenGrid[i * 4 + 2 + 0][j * 4 + 2 + 0] = false;
+					}
+				}
+					
         break;
       case APPLE:
         // up left of block
