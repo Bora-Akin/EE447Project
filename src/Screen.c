@@ -1,5 +1,26 @@
 #include "Screen.h"
 
+void Delay(uint32_t n)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+    volatile uint32_t time;
+#pragma GCC diagnostic pop
+    while (n > 0)
+    {
+        time = n; // Dummy operation
+        n--;
+    }
+}
+
+void CreateStartScreen(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
+{
+    return;
+}
+void CreateGameOverScreen(int gameScore)
+{
+    return;
+}
 void InitializeScreenGrid(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
 {
     // TODO: Can be changed to memset if it works
@@ -23,7 +44,7 @@ void InitializeScreenGrid(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
         screenGrid[SCREEN_WIDTH - 1][j] = true;
     }
 }
-void ScreenWriteGrid(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
+void DrawScreen(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
 {
     // Reset Cursor to top left
     ScreenWrite(0, 0x80);
@@ -39,30 +60,49 @@ void ScreenWriteGrid(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
     }
 }
 
-void UpdateScreenGridSnake(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT], const Point *Snake, const int snakeLength)
+void UpdateScreenGridSnake(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT], const Point oldSnakeTail, const Point newSnakeHead)
 {
-    for (int i = 0; i < snakeLength; i++)
-    {
-        screenGrid[1 + Snake[i].x * 4 + 0][1 + Snake[i].y * 4 + 0] = false; // Top left of snake, goes row by row from left to right
-        screenGrid[1 + Snake[i].x * 4 + 1][1 + Snake[i].y * 4 + 0] = false;
-        screenGrid[1 + Snake[i].x * 4 + 2][1 + Snake[i].y * 4 + 0] = false;
-        screenGrid[1 + Snake[i].x * 4 + 3][1 + Snake[i].y * 4 + 0] = false;
+    // Erase the old tail
+    screenGrid[1 + oldSnakeTail.x * 4 + 0][1 + oldSnakeTail.y * 4 + 0] = false; // Top left of snake, goes row by row from left to right
+    screenGrid[1 + oldSnakeTail.x * 4 + 1][1 + oldSnakeTail.y * 4 + 0] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 2][1 + oldSnakeTail.y * 4 + 0] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 3][1 + oldSnakeTail.y * 4 + 0] = false;
 
-        screenGrid[1 + Snake[i].x * 4 + 0][1 + Snake[i].y * 4 + 1] = false;
-        screenGrid[1 + Snake[i].x * 4 + 1][1 + Snake[i].y * 4 + 1] = true;
-        screenGrid[1 + Snake[i].x * 4 + 2][1 + Snake[i].y * 4 + 1] = true;
-        screenGrid[1 + Snake[i].x * 4 + 3][1 + Snake[i].y * 4 + 1] = true;
+    screenGrid[1 + oldSnakeTail.x * 4 + 0][1 + oldSnakeTail.y * 4 + 1] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 1][1 + oldSnakeTail.y * 4 + 1] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 2][1 + oldSnakeTail.y * 4 + 1] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 3][1 + oldSnakeTail.y * 4 + 1] = false;
 
-        screenGrid[1 + Snake[i].x * 4 + 0][1 + Snake[i].y * 4 + 2] = false;
-        screenGrid[1 + Snake[i].x * 4 + 1][1 + Snake[i].y * 4 + 2] = true;
-        screenGrid[1 + Snake[i].x * 4 + 2][1 + Snake[i].y * 4 + 2] = true;
-        screenGrid[1 + Snake[i].x * 4 + 3][1 + Snake[i].y * 4 + 2] = true;
+    screenGrid[1 + oldSnakeTail.x * 4 + 0][1 + oldSnakeTail.y * 4 + 2] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 1][1 + oldSnakeTail.y * 4 + 2] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 2][1 + oldSnakeTail.y * 4 + 2] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 3][1 + oldSnakeTail.y * 4 + 2] = false;
 
-        screenGrid[1 + Snake[i].x * 4 + 0][1 + Snake[i].y * 4 + 3] = false;
-        screenGrid[1 + Snake[i].x * 4 + 1][1 + Snake[i].y * 4 + 3] = true;
-        screenGrid[1 + Snake[i].x * 4 + 2][1 + Snake[i].y * 4 + 3] = true;
-        screenGrid[1 + Snake[i].x * 4 + 3][1 + Snake[i].y * 4 + 3] = true;
-    }
+    screenGrid[1 + oldSnakeTail.x * 4 + 0][1 + oldSnakeTail.y * 4 + 3] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 1][1 + oldSnakeTail.y * 4 + 3] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 2][1 + oldSnakeTail.y * 4 + 3] = false;
+    screenGrid[1 + oldSnakeTail.x * 4 + 3][1 + oldSnakeTail.y * 4 + 3] = false;
+
+    // Draw the new head
+    screenGrid[1 + newSnakeHead.x * 4 + 0][1 + newSnakeHead.y * 4 + 0] = false; // Top left of snake, goes row by row from left to right
+    screenGrid[1 + newSnakeHead.x * 4 + 1][1 + newSnakeHead.y * 4 + 0] = false;
+    screenGrid[1 + newSnakeHead.x * 4 + 2][1 + newSnakeHead.y * 4 + 0] = false;
+    screenGrid[1 + newSnakeHead.x * 4 + 3][1 + newSnakeHead.y * 4 + 0] = false;
+
+    screenGrid[1 + newSnakeHead.x * 4 + 0][1 + newSnakeHead.y * 4 + 1] = false;
+    screenGrid[1 + newSnakeHead.x * 4 + 1][1 + newSnakeHead.y * 4 + 1] = true;
+    screenGrid[1 + newSnakeHead.x * 4 + 2][1 + newSnakeHead.y * 4 + 1] = true;
+    screenGrid[1 + newSnakeHead.x * 4 + 3][1 + newSnakeHead.y * 4 + 1] = true;
+
+    screenGrid[1 + newSnakeHead.x * 4 + 0][1 + newSnakeHead.y * 4 + 2] = false;
+    screenGrid[1 + newSnakeHead.x * 4 + 1][1 + newSnakeHead.y * 4 + 2] = true;
+    screenGrid[1 + newSnakeHead.x * 4 + 2][1 + newSnakeHead.y * 4 + 2] = true;
+    screenGrid[1 + newSnakeHead.x * 4 + 3][1 + newSnakeHead.y * 4 + 2] = true;
+
+    screenGrid[1 + newSnakeHead.x * 4 + 0][1 + newSnakeHead.y * 4 + 3] = false;
+    screenGrid[1 + newSnakeHead.x * 4 + 1][1 + newSnakeHead.y * 4 + 3] = true;
+    screenGrid[1 + newSnakeHead.x * 4 + 2][1 + newSnakeHead.y * 4 + 3] = true;
+    screenGrid[1 + newSnakeHead.x * 4 + 3][1 + newSnakeHead.y * 4 + 3] = true;
 }
 void UpdateScreenGridApple(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT], const Point Apple)
 {
@@ -178,19 +218,6 @@ void SSI0_Init(void)
     SSI0->CR0 = (SSI0->CR0 & ~0x0000000F) + 0x07; // Set Data Size to 8-bit
     SSI0->CR1 |= 0x02;                            // Enable SSI
     GPIOA->DATA |= 0x08;                          // Set CS (PA3) High (Idle state)
-}
-
-void Delay(uint32_t n)
-{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-    volatile uint32_t time;
-#pragma GCC diagnostic pop
-    while (n > 0)
-    {
-        time = n; // Dummy operation
-        n--;
-    }
 }
 
 // Unused

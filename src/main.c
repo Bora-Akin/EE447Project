@@ -1,50 +1,110 @@
+#include <string.h>
 #include "Screen.h"
+#include "Game_Logic.h"
 
-// Pixels in the screen
-bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT];
 
-//Snake
-int snakeLength;
-Point Snake[SCREEN_HEIGHT*SCREEN_WIDTH];
-//Apple
-Point Apple;
-
-// ---------------------------------------------------------------------------
-// MAIN (Test Loop)
-// ---------------------------------------------------------------------------
-int main(void)
+void Delay2(uint32_t n)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+    volatile uint32_t time;
+#pragma GCC diagnostic pop
+    while (n > 0)
+    {
+        time = n; // Dummy operation
+        n--;
+    }
+}
 
-  // Initialize
-  ScreenInit();
+// Global Variables
 
-  // Clear any random noise
+bool ScreenGrid[SCREEN_WIDTH][SCREEN_HEIGHT]; // Pixels in the screen
+// Snake
+int SnakeLength;
+Point Snake[SCREEN_HEIGHT * SCREEN_WIDTH];
+int SnakeDir;
+Point Apple;
+int ControllerDir;
+bool isGameOver;
+
+bool IsStartButtonPressed()
+{
+  return true;
+}
+
+int ReadController()
+{
+  // Direction from the accelerator controller
+  return 0;
+}
+
+void GameOver(int gameScore)
+{
+  CreateGameOverScreen(gameScore);
   ScreenClear();
 
-  // Reset Cursor to top left
+  while (IsStartButtonPressed())
+  {
+    // Delay
+  }
+  return;
+}
+
+void StartScreen(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
+{
+  CreateStartScreen(screenGrid);
+  DrawScreen(screenGrid);
+  while (!IsStartButtonPressed())
+  {
+    // Delay
+  }
+  return;
+}
+
+int main(void)
+{
+  // Screen Initialize
+  ScreenInit();
+  ScreenClear();
   ScreenWrite(0, 0x80);
   ScreenWrite(0, 0x40);
 
-  //Create Snake and Apple
-  snakeLength = 3;
-  Apple.x = 2;
-  Apple.y = 3;
-  Snake[0].x = 0;
-  Snake[0].y = 0;
-  Snake[1].x = 1;
-  Snake[1].y = 0;
-  Snake[2].x = 2;
-  Snake[2].y = 0;
-  InitializeScreenGrid(screenGrid);
-  UpdateScreenGridSnake(screenGrid, Snake, snakeLength);
-  UpdateScreenGridApple(screenGrid, Apple);
-  ScreenWriteGrid(screenGrid);
+  // Start screen
+  StartScreen(ScreenGrid);
 
-  // Loop forever drawing a pattern
+  // Game Initialization
+  Apple.x = 10;
+  Apple.y = 7;
+  Snake[0].x = 10;
+  Snake[0].y = 9;
+  SnakeLength = 1;
+  SnakeDir = 0;
+  InitializeScreenGrid(ScreenGrid);
+  UpdateScreenGridSnake(ScreenGrid, Snake[SnakeLength], Snake[0]);
+  UpdateScreenGridApple(ScreenGrid, Apple);
+  DrawScreen(ScreenGrid);
+
+    Delay2(1000000);
   while (1)
   {
-  UpdateScreenGridSnake(screenGrid, Snake, snakeLength);
-  UpdateScreenGridApple(screenGrid, Apple);
-  ScreenWriteGrid(screenGrid);
+    ControllerDir = ReadController();
+    int moveSnakeOut = 0;
+    int movDir = (ControllerDir + 2) % 4 == SnakeDir ? SnakeDir : ControllerDir;
+    moveSnakeOut = MoveSnake(movDir, Snake, &SnakeLength, Apple);
+    SnakeDir = movDir;
+
+    if (moveSnakeOut == 2)
+    {
+      ResetApple(&Apple, Snake, SnakeLength);
+      UpdateScreenGridApple(ScreenGrid, Apple);
+    }
+    if (moveSnakeOut == 1)
+    {
+      GameOver(3);
+    }
+
+    UpdateScreenGridSnake(ScreenGrid, Snake[SnakeLength], Snake[0]);
+    DrawScreen(ScreenGrid);
+    Delay2(1000000);
   }
 }
