@@ -22,6 +22,13 @@ void ADXL345_Init(void);
 void ADXL345_ReadXY(int16_t* x, int16_t* y);
 int RawAccDataConverter(int xdat,int ydat, int curdir);
 
+int InputDirection(int curDir){
+    int16_t x;
+    int16_t y;
+    ADXL345_ReadXY(&x, &y);
+    return RawAccDataConverter(x, y, curDir);
+}
+
 // ----------------------------------------------------------------------------
 // Initialization of I2C0 on PB2 (SCL) and PB3 (SDA)
 // ----------------------------------------------------------------------------
