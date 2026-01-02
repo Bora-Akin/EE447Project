@@ -16,8 +16,22 @@ typedef enum
 
 typedef struct
 {
-    unsigned char x; // 0 to 20
-    unsigned char y; // 0 to 11
+    int x; // 0 to 20
+    int y; // 0 to 11
 } Point;
+
+typedef enum
+{
+    UP_DIR, // 0
+    RIGHT_DIR, // 1
+    DOWN_DIR, // 2
+    LEFT_DIR  // 3
+} Direction;
+
+typedef struct
+{
+    int pitch; // 0 to 20
+    int duration; // 0 to 11
+} SoundNote;
 
 #endif

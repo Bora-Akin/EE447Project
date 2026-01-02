@@ -1,19 +1,20 @@
 #include <string.h>
 #include "Screen.h"
 #include "Game_Logic.h"
-
+#include "buzzer.h"
+#include "button_read.h"
 
 void Delay2(uint32_t n)
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-    volatile uint32_t time;
+  volatile uint32_t time;
 #pragma GCC diagnostic pop
-    while (n > 0)
-    {
-        time = n; // Dummy operation
-        n--;
-    }
+  while (n > 0)
+  {
+    time = n; // Dummy operation
+    n--;
+  }
 }
 
 // Global Variables
@@ -21,7 +22,7 @@ void Delay2(uint32_t n)
 bool ScreenGrid[SCREEN_WIDTH][SCREEN_HEIGHT]; // Pixels in the screen
 // Snake
 int SnakeLength;
-Point Snake[SCREEN_HEIGHT * SCREEN_WIDTH];
+Point Snake[GAME_GRID_X * GAME_GRID_Y];
 int SnakeDir;
 Point Apple;
 int ControllerDir;
@@ -29,19 +30,20 @@ bool isGameOver;
 
 bool IsStartButtonPressed()
 {
-  return true;
+  return IsPF4PressedDebounced();
 }
 
 int ReadController()
 {
-  // Direction from the accelerator controller
+ 
+	// Direction from the accelerator controller
   return 0;
 }
 
 void GameOver(int gameScore)
 {
-  CreateGameOverScreen(gameScore);
-  ScreenClear();
+  CreateGameOverScreen(gameScore, ScreenGrid);
+  //ScreenClear();
 
   while (IsStartButtonPressed())
   {
@@ -63,6 +65,10 @@ void StartScreen(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
 
 int main(void)
 {
+  //Init start button
+  InitPF4();
+  // Buzzer init
+  InitBuzzer();
   // Screen Initialize
   ScreenInit();
   ScreenClear();
@@ -84,12 +90,22 @@ int main(void)
   UpdateScreenGridApple(ScreenGrid, Apple);
   DrawScreen(ScreenGrid);
 
-    Delay2(1000000);
+  Delay2(1000000);
   while (1)
   {
     ControllerDir = ReadController();
     int moveSnakeOut = 0;
-    int movDir = (ControllerDir + 2) % 4 == SnakeDir ? SnakeDir : ControllerDir;
+    int movDir;
+    if ((ControllerDir + 2) % 4 == SnakeDir)
+    {
+      movDir = SnakeDir;
+      MakeBadMelody();
+    }else
+    {
+      MakeBadMelody();
+      movDir = ControllerDir;
+    }
+    
     moveSnakeOut = MoveSnake(movDir, Snake, &SnakeLength, Apple);
     SnakeDir = movDir;
 

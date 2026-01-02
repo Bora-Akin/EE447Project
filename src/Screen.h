@@ -18,7 +18,7 @@ void UpdateScreenGridSnake(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT], const P
 void UpdateScreenGridApple(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT], const Point Apple);
 uint8_t ExtractBlock(int x, int pageIndex, bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT]);
 void CreateStartScreen(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT]);
-void CreateGameOverScreen(int gameScore);
+void CreateGameOverScreen(int gameScore, bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT]);
 
 //Game Grid will not be used
 void InitializeGameGrid(Block gameGrid[GAME_GRID_X][GAME_GRID_Y]);

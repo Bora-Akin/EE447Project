@@ -12,14 +12,361 @@ void Delay(uint32_t n)
         n--;
     }
 }
+#include <stdbool.h>
+// Assuming these are defined in your header files:
+// #define SCREEN_WIDTH 84
+// #define SCREEN_HEIGHT 48
 
 void CreateStartScreen(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
 {
+    // 1. Clear the entire grid first
+    for (int y = 0; y < SCREEN_HEIGHT; y++) {
+        for (int x = 0; x < SCREEN_WIDTH; x++) {
+            screenGrid[x][y] = false;
+        }
+    }
+
+    // ==========================================
+    // Draw Title: "SNAKE" (Large, Bold Letters)
+    // ==========================================
+    // Starting Y position for the title row
+    int titleY = 8; 
+
+    // --- Draw 'S' ---
+    int sx = 18; // Starting X for S
+    // Top bar
+    screenGrid[sx+1][titleY+0] = true; screenGrid[sx+2][titleY+0] = true; screenGrid[sx+3][titleY+0] = true;
+    // Left side top
+    screenGrid[sx+0][titleY+1] = true;
+    screenGrid[sx+0][titleY+2] = true;
+    // Middle curve
+    screenGrid[sx+1][titleY+3] = true; screenGrid[sx+2][titleY+3] = true;
+    // Right side bottom
+    screenGrid[sx+3][titleY+4] = true;
+    screenGrid[sx+3][titleY+5] = true;
+    // Bottom bar
+    screenGrid[sx+0][titleY+6] = true; screenGrid[sx+1][titleY+6] = true; screenGrid[sx+2][titleY+6] = true;
+
+    // --- Draw 'N' ---
+    int nx = 28; // Starting X for N
+    // Left vertical line
+    for(int i=0; i<=6; i++) screenGrid[nx+0][titleY+i] = true;
+    // Diagonal line
+    screenGrid[nx+1][titleY+2] = true;
+    screenGrid[nx+2][titleY+3] = true;
+    screenGrid[nx+3][titleY+4] = true;
+    // Right vertical line
+    for(int i=0; i<=6; i++) screenGrid[nx+4][titleY+i] = true;
+
+    // --- Draw 'A' ---
+    int ax = 38; // Starting X for A
+    // Top point
+    screenGrid[ax+2][titleY+0] = true;
+    screenGrid[ax+1][titleY+1] = true; screenGrid[ax+3][titleY+1] = true;
+    // Middle bar
+    screenGrid[ax+1][titleY+3] = true; screenGrid[ax+2][titleY+3] = true; screenGrid[ax+3][titleY+3] = true;
+    // Side legs
+    for(int i=2; i<=6; i++) screenGrid[ax+0][titleY+i] = true;
+    for(int i=2; i<=6; i++) screenGrid[ax+4][titleY+i] = true;
+
+    // --- Draw 'K' ---
+    int kx = 48;
+    // Left vertical line
+    for(int i=0; i<=6; i++) screenGrid[kx+0][titleY+i] = true;
+    // Top diagonal notch
+    screenGrid[kx+3][titleY+0] = true;
+    screenGrid[kx+2][titleY+1] = true;
+    screenGrid[kx+1][titleY+2] = true;
+    // Middle join
+    screenGrid[kx+1][titleY+3] = true;
+    // Bottom diagonal leg
+    screenGrid[kx+2][titleY+4] = true;
+    screenGrid[kx+3][titleY+5] = true;
+    screenGrid[kx+4][titleY+6] = true;
+
+    // --- Draw 'E' ---
+    int ex = 58;
+    // Left vertical line
+    for(int i=0; i<=6; i++) screenGrid[ex+0][titleY+i] = true;
+    // Top bar
+    for(int i=0; i<=3; i++) screenGrid[ex+i][titleY+0] = true;
+    // Middle bar (shorter)
+    for(int i=0; i<=2; i++) screenGrid[ex+i][titleY+3] = true;
+    // Bottom bar
+    for(int i=0; i<=3; i++) screenGrid[ex+i][titleY+6] = true;
+
+
+    // ==========================================================
+    // Draw Subtitle: "PRESS BUTTON" (Smaller letters underneath)
+    // ==========================================================
+    // Due to space constraints and tedium, I shortened the text slightly
+    // and used very small (3x5 pixel) letters.
+    
+    int subY = 30; // Y position for subtitle row
+
+    // P (at x=10)
+    for(int i=0; i<5; i++) screenGrid[10][subY+i] = true;
+    screenGrid[11][subY] = true; screenGrid[12][subY+1] = true; screenGrid[11][subY+2] = true;
+    
+    // R (at x=14)
+    for(int i=0; i<5; i++) screenGrid[14][subY+i] = true;
+    screenGrid[15][subY] = true; screenGrid[16][subY+1] = true; screenGrid[15][subY+2] = true;
+    screenGrid[16][subY+3] = true; screenGrid[16][subY+4] = true;
+
+    // E (at x=18)
+    for(int i=0; i<5; i++) screenGrid[18][subY+i] = true;
+    screenGrid[19][subY]=true; screenGrid[20][subY]=true;
+    screenGrid[19][subY+2]=true;
+    screenGrid[19][subY+4]=true; screenGrid[20][subY+4]=true;
+
+    // S (at x=22)
+    screenGrid[22][subY]=true; screenGrid[23][subY]=true; screenGrid[24][subY]=true;
+    screenGrid[22][subY+1]=true;
+    screenGrid[23][subY+2]=true;
+    screenGrid[24][subY+3]=true;
+    screenGrid[22][subY+4]=true; screenGrid[23][subY+4]=true; screenGrid[24][subY+4]=true;
+
+    // S (at x=26) - Same as above
+    screenGrid[26][subY]=true; screenGrid[27][subY]=true; screenGrid[28][subY]=true;
+    screenGrid[26][subY+1]=true;
+    screenGrid[27][subY+2]=true;
+    screenGrid[28][subY+3]=true;
+    screenGrid[26][subY+4]=true; screenGrid[27][subY+4]=true; screenGrid[28][subY+4]=true;
+
+    // -- Space at x=30, 31 --
+
+    // B (at x=32)
+    for(int i=0; i<5; i++) screenGrid[32][subY+i] = true;
+    screenGrid[33][subY]=true; screenGrid[33][subY+2]=true; screenGrid[33][subY+4]=true;
+    screenGrid[34][subY+1]=true; screenGrid[34][subY+3]=true;
+
+    // U (at x=36)
+    for(int i=0; i<4; i++) screenGrid[36][subY+i] = true;
+    for(int i=0; i<4; i++) screenGrid[38][subY+i] = true;
+    screenGrid[37][subY+4]=true;
+
+    // T (at x=40)
+    for(int i=0; i<3; i++) screenGrid[40+i][subY] = true;
+    for(int i=1; i<5; i++) screenGrid[41][subY+i] = true;
+
+    // T (at x=44)
+    for(int i=0; i<3; i++) screenGrid[44+i][subY] = true;
+    for(int i=1; i<5; i++) screenGrid[45][subY+i] = true;
+
+    // O (at x=48)
+    for(int i=1; i<4; i++) screenGrid[48][subY+i] = true;
+    for(int i=1; i<4; i++) screenGrid[50][subY+i] = true;
+    screenGrid[49][subY]=true; screenGrid[49][subY+4]=true;
+
+    // N (at x=52)
+    for(int i=0; i<5; i++) screenGrid[52][subY+i] = true;
+    screenGrid[53][subY+1]=true; screenGrid[53][subY+2]=true;
+    for(int i=0; i<5; i++) screenGrid[54][subY+i] = true;
+    
+    // Draw a simple underline decoration
+    for(int x=10; x<65; x++) {
+         screenGrid[x][subY+6] = true;
+    }
+
     return;
 }
-void CreateGameOverScreen(int gameScore)
+
+
+// Assuming global dimensions:
+// #define SCREEN_WIDTH 84
+// #define SCREEN_HEIGHT 48
+void CreateGameOverScreen(int gameScore, bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
 {
-    return;
+    // 1. Clear the screen
+    for (int y = 0; y < SCREEN_HEIGHT; y++) {
+        for (int x = 0; x < SCREEN_WIDTH; x++) {
+            screenGrid[x][y] = false;
+        }
+    }
+
+    // ==========================================
+    // 1. Draw "GAME" (Y = 4)
+    // ==========================================
+    int gy = 4;
+    
+    // G (x=24)
+    for(int i=1; i<6; i++) screenGrid[24][gy+i] = true; // Left
+    screenGrid[25][gy] = true; screenGrid[26][gy] = true; screenGrid[27][gy] = true; // Top
+    screenGrid[25][gy+6] = true; screenGrid[26][gy+6] = true; screenGrid[27][gy+6] = true; // Bottom
+    screenGrid[27][gy+3] = true; screenGrid[27][gy+4] = true; screenGrid[27][gy+5] = true; // Hook
+    screenGrid[26][gy+3] = true; // Inward dash
+
+    // A (x=30)
+    for(int i=2; i<7; i++) screenGrid[30][gy+i] = true;
+    for(int i=2; i<7; i++) screenGrid[34][gy+i] = true;
+    screenGrid[31][gy+1] = true; screenGrid[33][gy+1] = true;
+    screenGrid[32][gy] = true;
+    screenGrid[31][gy+3] = true; screenGrid[32][gy+3] = true; screenGrid[33][gy+3] = true;
+
+    // M (x=36)
+    for(int i=0; i<7; i++) screenGrid[36][gy+i] = true;
+    for(int i=0; i<7; i++) screenGrid[40][gy+i] = true;
+    screenGrid[37][gy+1] = true;
+    screenGrid[38][gy+2] = true;
+    screenGrid[39][gy+1] = true;
+
+    // E (x=42)
+    for(int i=0; i<7; i++) screenGrid[42][gy+i] = true;
+    for(int i=0; i<4; i++) screenGrid[42+i][gy] = true;   // Top
+    for(int i=0; i<3; i++) screenGrid[42+i][gy+3] = true; // Mid
+    for(int i=0; i<4; i++) screenGrid[42+i][gy+6] = true; // Bot
+
+    // ==========================================
+    // 2. Draw "OVER" (Y = 14)
+    // ==========================================
+    int oy = 14;
+
+    // O (x=24)
+    for(int i=1; i<6; i++) screenGrid[24][oy+i] = true;
+    for(int i=1; i<6; i++) screenGrid[28][oy+i] = true;
+    screenGrid[25][oy] = true; screenGrid[26][oy] = true; screenGrid[27][oy] = true;
+    screenGrid[25][oy+6] = true; screenGrid[26][oy+6] = true; screenGrid[27][oy+6] = true;
+
+    // V (x=30)
+    for(int i=0; i<5; i++) screenGrid[30][oy+i] = true;
+    for(int i=0; i<5; i++) screenGrid[34][oy+i] = true;
+    screenGrid[31][oy+5] = true; screenGrid[33][oy+5] = true;
+    screenGrid[32][oy+6] = true;
+
+    // E (x=36)
+    for(int i=0; i<7; i++) screenGrid[36][oy+i] = true;
+    for(int i=0; i<4; i++) screenGrid[36+i][oy] = true;
+    for(int i=0; i<3; i++) screenGrid[36+i][oy+3] = true;
+    for(int i=0; i<4; i++) screenGrid[36+i][oy+6] = true;
+
+    // R (x=42)
+    for(int i=0; i<7; i++) screenGrid[42][oy+i] = true;
+    screenGrid[43][oy] = true; screenGrid[44][oy] = true; screenGrid[45][oy+1] = true;
+    screenGrid[45][oy+2] = true; screenGrid[44][oy+3] = true; screenGrid[43][oy+3] = true;
+    screenGrid[44][oy+4] = true; screenGrid[45][oy+5] = true; screenGrid[46][oy+6] = true;
+
+
+    // ==========================================
+    // 3. Draw "SCORE:" (Y = 30) (Small Font)
+    // ==========================================
+    int sy = 30;
+    
+    // S (x=10)
+    screenGrid[10][sy]=1; screenGrid[11][sy]=1; screenGrid[12][sy]=1;
+    screenGrid[10][sy+1]=1;
+    screenGrid[10][sy+2]=1; screenGrid[11][sy+2]=1; screenGrid[12][sy+2]=1;
+    screenGrid[12][sy+3]=1;
+    screenGrid[10][sy+4]=1; screenGrid[11][sy+4]=1; screenGrid[12][sy+4]=1;
+
+    // C (x=14)
+    for(int i=0; i<5; i++) screenGrid[14][sy+i] = 1;
+    screenGrid[15][sy]=1; screenGrid[16][sy]=1;
+    screenGrid[15][sy+4]=1; screenGrid[16][sy+4]=1;
+
+    // O (x=18)
+    for(int i=0; i<5; i++) screenGrid[18][sy+i]=1;
+    for(int i=0; i<5; i++) screenGrid[20][sy+i]=1;
+    screenGrid[19][sy]=1; screenGrid[19][sy+4]=1;
+
+    // R (x=22)
+    for(int i=0; i<5; i++) screenGrid[22][sy+i]=1;
+    screenGrid[23][sy]=1; screenGrid[24][sy]=1;
+    screenGrid[24][sy+1]=1;
+    screenGrid[23][sy+2]=1; screenGrid[24][sy+2]=1;
+    screenGrid[24][sy+3]=1; screenGrid[24][sy+4]=1;
+
+    // E (x=26)
+    for(int i=0; i<5; i++) screenGrid[26][sy+i]=1;
+    screenGrid[27][sy]=1; screenGrid[28][sy]=1;
+    screenGrid[27][sy+2]=1; screenGrid[28][sy+2]=1;
+    screenGrid[27][sy+4]=1; screenGrid[28][sy+4]=1;
+    
+    // : (x=30)
+    screenGrid[30][sy+1] = true;
+    screenGrid[30][sy+3] = true;
+
+
+    // ==========================================
+    // 4. Draw The Number (Y = 30, X starts at 34)
+    // ==========================================
+    
+    // Break score into digits (Up to 999)
+    if (gameScore > 999) gameScore = 999;
+    int hundreds = gameScore / 100;
+    int tens = (gameScore / 10) % 10;
+    int ones = gameScore % 10;
+
+    int digits[3] = {hundreds, tens, ones};
+    int startX = 34;
+
+    // Loop through the 3 digits
+    for (int k = 0; k < 3; k++) {
+        int d = digits[k];
+        int dx = startX + (k * 5); // Shift right by 5 pixels for each digit
+
+        // Skip leading zeros (optional, but looks better)
+        // If score is 0, print "000" or just "0" depending on preference.
+        // This simple version prints "005" for 5. 
+
+        switch(d) {
+            case 0:
+                for(int i=0;i<5;i++) { screenGrid[dx][sy+i]=1; screenGrid[dx+2][sy+i]=1; }
+                screenGrid[dx+1][sy]=1; screenGrid[dx+1][sy+4]=1;
+                break;
+            case 1:
+                for(int i=0;i<5;i++) screenGrid[dx+1][sy+i]=1;
+                screenGrid[dx][sy+1]=1; screenGrid[dx][sy+4]=1; screenGrid[dx+2][sy+4]=1;
+                break;
+            case 2:
+                screenGrid[dx][sy]=1; screenGrid[dx+1][sy]=1; screenGrid[dx+2][sy]=1;
+                screenGrid[dx+2][sy+1]=1;
+                screenGrid[dx][sy+2]=1; screenGrid[dx+1][sy+2]=1; screenGrid[dx+2][sy+2]=1;
+                screenGrid[dx][sy+3]=1;
+                screenGrid[dx][sy+4]=1; screenGrid[dx+1][sy+4]=1; screenGrid[dx+2][sy+4]=1;
+                break;
+            case 3:
+                screenGrid[dx][sy]=1; screenGrid[dx+1][sy]=1; screenGrid[dx+2][sy]=1;
+                screenGrid[dx+2][sy+1]=1;
+                screenGrid[dx+1][sy+2]=1; screenGrid[dx+2][sy+2]=1;
+                screenGrid[dx+2][sy+3]=1;
+                screenGrid[dx][sy+4]=1; screenGrid[dx+1][sy+4]=1; screenGrid[dx+2][sy+4]=1;
+                break;
+            case 4:
+                screenGrid[dx][sy]=1; screenGrid[dx][sy+1]=1; screenGrid[dx][sy+2]=1;
+                screenGrid[dx+1][sy+2]=1; screenGrid[dx+2][sy+2]=1;
+                for(int i=0;i<5;i++) screenGrid[dx+2][sy+i]=1;
+                break;
+            case 5:
+                screenGrid[dx][sy]=1; screenGrid[dx+1][sy]=1; screenGrid[dx+2][sy]=1;
+                screenGrid[dx][sy+1]=1;
+                screenGrid[dx][sy+2]=1; screenGrid[dx+1][sy+2]=1; screenGrid[dx+2][sy+2]=1;
+                screenGrid[dx+2][sy+3]=1;
+                screenGrid[dx][sy+4]=1; screenGrid[dx+1][sy+4]=1; screenGrid[dx+2][sy+4]=1;
+                break;
+            case 6:
+                screenGrid[dx][sy]=1; screenGrid[dx+1][sy]=1; screenGrid[dx+2][sy]=1;
+                screenGrid[dx][sy+1]=1;
+                screenGrid[dx][sy+2]=1; screenGrid[dx+1][sy+2]=1; screenGrid[dx+2][sy+2]=1;
+                screenGrid[dx][sy+3]=1; screenGrid[dx+2][sy+3]=1;
+                screenGrid[dx][sy+4]=1; screenGrid[dx+1][sy+4]=1; screenGrid[dx+2][sy+4]=1;
+                break;
+            case 7:
+                screenGrid[dx][sy]=1; screenGrid[dx+1][sy]=1; screenGrid[dx+2][sy]=1;
+                screenGrid[dx+2][sy+1]=1; screenGrid[dx+1][sy+2]=1; screenGrid[dx+1][sy+3]=1; screenGrid[dx+1][sy+4]=1;
+                break;
+            case 8:
+                for(int i=0;i<5;i++) { screenGrid[dx][sy+i]=1; screenGrid[dx+2][sy+i]=1; }
+                screenGrid[dx+1][sy]=1; screenGrid[dx+1][sy+2]=1; screenGrid[dx+1][sy+4]=1;
+                break;
+            case 9:
+                screenGrid[dx][sy]=1; screenGrid[dx+1][sy]=1; screenGrid[dx+2][sy]=1;
+                screenGrid[dx][sy+1]=1; screenGrid[dx+2][sy+1]=1;
+                screenGrid[dx][sy+2]=1; screenGrid[dx+1][sy+2]=1; screenGrid[dx+2][sy+2]=1;
+                screenGrid[dx+2][sy+3]=1;
+                screenGrid[dx][sy+4]=1; screenGrid[dx+1][sy+4]=1; screenGrid[dx+2][sy+4]=1;
+                break;
+        }
+    }
 }
 void InitializeScreenGrid(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
 {
