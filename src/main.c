@@ -138,18 +138,18 @@ int main(void)
 
       moveSnakeOut = MoveSnake(SnakeDir, Snake, &SnakeLength, Apple);
 
-      if (moveSnakeOut == 2)
+      if (moveSnakeOut == 2) // Apple eat
       {
         MakeAppleMelody();
         ResetApple(&Apple, Snake, SnakeLength);
         UpdateScreenGridApple(ScreenGrid, Apple);
         UpdateGreenLedTime();
       }
-      if (moveSnakeOut == 1)
+      if (moveSnakeOut == 1) // Collision
       {
         isGameOver = true;
       }
-      else
+      else // Regular movement
       {
         UpdateScreenGridSnake(ScreenGrid, Snake[SnakeLength], Snake[0], Snake);
         DrawScreen(ScreenGrid);

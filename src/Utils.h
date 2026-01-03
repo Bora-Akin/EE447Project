@@ -2,6 +2,7 @@
 #ifndef _MYHEADER_UTILS_
 #define _MYHEADER_UTILS_
 #include <stdint.h>
+//Constants
 #define GAME_GRID_X 20
 #define GAME_GRID_Y 11
 #define SCREEN_WIDTH 84

@@ -642,19 +642,19 @@ void UpdateScreenGridSnake(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT], const P
         screenGrid[1 + newSnakeHead.x * 4 + 0][1 + newSnakeHead.y * 4 + 2] = true;
         screenGrid[1 + newSnakeHead.x * 4 + 0][1 + newSnakeHead.y * 4 + 3] = true;
     }
-    if (snake[0].x + 1 == snake[1].x)
+    else if (snake[0].x + 1 == snake[1].x)
     {
         screenGrid[1 + snake[1].x * 4 + 0][1 + snake[1].y * 4 + 1] = true;
         screenGrid[1 + snake[1].x * 4 + 0][1 + snake[1].y * 4 + 2] = true;
         screenGrid[1 + snake[1].x * 4 + 0][1 + snake[1].y * 4 + 3] = true;
     }
-    if (snake[0].y - 1 == snake[1].y)
+    else if (snake[0].y - 1 == snake[1].y)
     {
         screenGrid[1 + newSnakeHead.x * 4 + 1][1 + newSnakeHead.y * 4 + 0] = true;
         screenGrid[1 + newSnakeHead.x * 4 + 2][1 + newSnakeHead.y * 4 + 0] = true;
         screenGrid[1 + newSnakeHead.x * 4 + 3][1 + newSnakeHead.y * 4 + 0] = true;
     }
-    if (snake[0].y + 1 == snake[1].y)
+    else if (snake[0].y + 1 == snake[1].y)
     {
         screenGrid[1 + snake[1].x * 4 + 1][1 + snake[1].y * 4 + 0] = true;
         screenGrid[1 + snake[1].x * 4 + 2][1 + snake[1].y * 4 + 0] = true;
