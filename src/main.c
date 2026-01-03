@@ -5,6 +5,7 @@
 #include "button_read.h"
 #include "potantiometer.h"
 #include "acc.h"
+#include "leds.h"
 
 void Delay2(uint32_t n)
 {
@@ -29,51 +30,54 @@ int SnakeDir;
 Point Apple;
 int ControllerDir;
 bool isGameOver;
-bool waitGame;
+extern bool WaitGame;
 int GameSpeed;
 
-bool IsStartButtonPressed()
+bool IsStartButtonPressedAndReleased()
 {
-  return IsPF4PressedDebounced();
+  while (!IsPF4PressedDebounced())
+  {
+  }
+  while (!IsPF4ReleasedDebounced())
+  {
+  }
+  return true;
 }
-
 
 void GameOver(int gameScore)
 {
+
+  TurnOnRedLed();
   MakeBadMelody();
   CreateGameOverScreen(gameScore, ScreenGrid);
   DrawScreen(ScreenGrid);
-  // ScreenClear();
-
-  while (!IsStartButtonPressed())
-  {
-    // Delay
-  }
+  IsStartButtonPressedAndReleased();
   return;
 }
 
 void StartScreen(bool screenGrid[SCREEN_WIDTH][SCREEN_HEIGHT])
 {
+  TurnOnBlueLed();
   MakeGoodMelody();
   CreateStartScreen(screenGrid);
   DrawScreen(screenGrid);
-  while (!IsStartButtonPressed())
-  {
-    // Delay
-  }
+  IsStartButtonPressedAndReleased();
+  srand(ReadPot());
   return;
 }
 
 int main(void)
 {
   // Initilaizes-----------------------------------------------------------
-  //Accelerator Init
+  // LED
+  LEDs_Init();
+  // Accelerator Init
   ADXL345_Init();
   // Init potentiometer
   InitPotentiometer();
   // Init start button
   InitPF4();
-  // Buzzer init
+  // Sound init
   InitBuzzer();
   // Screen Initialize
   ScreenInit();
@@ -81,49 +85,65 @@ int main(void)
   ScreenWrite(0, 0x80);
   ScreenWrite(0, 0x40);
   //-----------------------------------------------------------------------
+  // Start screen
+  StartScreen(ScreenGrid);
+
   do
   {
-    // Start screen
-    StartScreen(ScreenGrid);
-
     // Game Initialization
     isGameOver = false;
-    Apple.x = 10;
-    Apple.y = 7;
-    Snake[0].x = 10;
-    Snake[0].y = 9;
-    SnakeLength = 1;
-    SnakeDir = 0;
-    InitializeScreenGrid(ScreenGrid);
-    UpdateScreenGridSnake(ScreenGrid, Snake[SnakeLength], Snake[0]);
+    Snake[0].x = 8;
+    Snake[0].y = 5;
+    Snake[1].x = 7;
+    Snake[1].y = 5;
+    Snake[2].x = 6;
+    Snake[2].y = 5;
+    Snake[3].x = 5;
+    Snake[3].y = 5;
+    Snake[4].x = 4;
+    Snake[4].y = 5;
+    Snake[5].x = 3;
+    Snake[5].y = 5;
+    Snake[6].x = 2;
+    Snake[6].y = 5;
+    Snake[7].x = 1;
+    Snake[7].y = 5;
+    SnakeLength = 8;
+    SnakeDir = 1;
+    ControllerDir = 1;
+    int moveSnakeOut = 0;
+
+    ResetApple(&Apple, Snake, SnakeLength);
+    TurnOnGreenLed();
+    InitializeScreenGrid(ScreenGrid, Snake, SnakeLength);
+    UpdateScreenGridSnake(ScreenGrid, Snake[SnakeLength], Snake[0], Snake);
     UpdateScreenGridApple(ScreenGrid, Apple);
     DrawScreen(ScreenGrid);
 
     Delay2(1000000);
     while (!isGameOver)
     {
-      waitGame = true;
+      WaitGame = true;
       ControllerDir = InputDirection(SnakeDir);
-      int moveSnakeOut = 0;
-      int movDir;
+      moveSnakeOut = 0;
       if ((ControllerDir + 2) % 4 == SnakeDir)
       {
-        movDir = SnakeDir;
         MakeSound(100, 100);
       }
-      else
+      else if (SnakeDir != ControllerDir)
       {
-        movDir = ControllerDir;
+        SnakeDir = ControllerDir;
         MakeSound(440, 100);
       }
 
-      moveSnakeOut = MoveSnake(movDir, Snake, &SnakeLength, Apple);
-      SnakeDir = movDir;
+      moveSnakeOut = MoveSnake(SnakeDir, Snake, &SnakeLength, Apple);
 
       if (moveSnakeOut == 2)
       {
+        MakeAppleMelody();
         ResetApple(&Apple, Snake, SnakeLength);
         UpdateScreenGridApple(ScreenGrid, Apple);
+        UpdateGreenLedTime();
       }
       if (moveSnakeOut == 1)
       {
@@ -131,14 +151,13 @@ int main(void)
       }
       else
       {
-        UpdateScreenGridSnake(ScreenGrid, Snake[SnakeLength], Snake[0]);
+        UpdateScreenGridSnake(ScreenGrid, Snake[SnakeLength], Snake[0], Snake);
         DrawScreen(ScreenGrid);
       }
-      while (waitGame)
+      while (WaitGame && !isGameOver)
       {
-            }
+      }
     }
-
     GameOver(SnakeLength);
   } while (true);
 }
